@@ -1,5 +1,6 @@
 # COOM Engine
  3D FPS game engine written in a week using DirectXTK
+![alt text](https://github.com/KleskBY/COOM-Engine/blob/master/img.jpg?raw=true)<br>
 
 <br><br>
 <h2>Features:</h2><br>
