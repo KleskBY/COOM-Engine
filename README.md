@@ -13,3 +13,9 @@
 - Recoil and spread.<br>
 - Weapon bob like in GZdoom.<br>
 
+<h2>TODO:</h2>
+- Sound system<br>
+- Better AI<br>
+- Player HUD<br>
+- Scene change<br>
+- Multiplayer<br>
