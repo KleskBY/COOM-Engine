@@ -4,6 +4,7 @@ namespace player
 {
 	void MouseLook();
 	void PlayerMove();
+
 	//Settings
 	constexpr float FRICTION = 8.0f;
 	constexpr float ACCELERATION = 1.00f;
@@ -15,14 +16,7 @@ namespace player
 	constexpr float NOCLIP_SPEED = 30.0f;
 	constexpr Vector3 STAND_SIZE = Vector3(1.0f, 1.8f, 1.0f);
 	constexpr Vector3 CROUCH_SIZE = Vector3(1.0f, 1.0f, 1.0f);
-	//constexpr float FRICTION = 8.0f;
-	//constexpr float ACCELERATION = 1.00f;
-	//constexpr float SPEED = 50.0f;
-	//constexpr Vector3 MAX_VELOCITY = Vector3(1000.f, 2000.f, 1000.f);
-	//constexpr float GRAVITY = 20.f;
-	//constexpr float JUMP_FORCE = 5.0f;
-	//constexpr float STEP_HEIGHT = 0.5f;
-	//constexpr float NOCLIP_SPEED = 300.0f;
+
 
 
 
@@ -35,6 +29,7 @@ namespace player
 	inline bool PlayerGrounded;
 	inline bool noclip;
 
+	inline int PlayerHealth = 0;
 
 	//
 	inline BoundingBox PlayerCollider;

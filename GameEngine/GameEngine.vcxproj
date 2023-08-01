@@ -191,11 +191,12 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="dx_tools.h" />
-    <ClInclude Include="e1m1_collision.h" />
     <ClInclude Include="EntityList.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameUpdate.h" />
     <ClInclude Include="gui.h" />
+    <ClInclude Include="gui_hud.h" />
+    <ClInclude Include="gui_style.h" />
     <ClInclude Include="hkOnDevice.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Viewmodel.h" />
     <ClInclude Include="Weapons.h" />
+    <ClInclude Include="WndProc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
@@ -228,6 +230,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameUpdate.cpp" />
     <ClCompile Include="gui.cpp" />
+    <ClCompile Include="gui_hud.cpp" />
+    <ClCompile Include="gui_style.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -253,6 +257,7 @@
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="Viewmodel.cpp" />
     <ClCompile Include="Weapons.cpp" />
+    <ClCompile Include="WndProc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

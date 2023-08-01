@@ -109,8 +109,10 @@ void Renderer(ID3D11Device* device, ID3D11DeviceContext* context, IDXGISwapChain
 	//primitiveBatch->End();
 
 
-	if (!LevelObjects.size()) LoadLevel(device, context, "e1m1");
-	else RenderLevel(context);
+	if (!CurrentLevel.size()) return;
+	RenderLevel(context);
+	//if (!LevelObjects.size()) LoadLevel(device, context, "e1m1");
+	//else RenderLevel(context);
 
 	if (Sky && SkyboxTexture) RenderSky(context);
 	else CreateSky(device, context, "sky1");

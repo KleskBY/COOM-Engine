@@ -4,7 +4,7 @@
 //SETTINGS
 
 //Window
-inline bool LockMouse = true;
+inline bool LockMouse = false;
 inline bool Fullscreen = false;
 inline int WindowWidth = 1280;
 inline int WindowHeight = 720;
@@ -12,12 +12,17 @@ inline std::wstring WindowTitle = L"Game";
 inline std::wstring WindowClass = L"GameEngine";
 inline HWND hwnd;
 
+//GUI
+inline bool ShowMenu = true;
+
 //Paths
-const std::wstring PATH_DATA = L"data";
-const std::wstring PATH_TEXTURES = PATH_DATA + L"\\textures\\";
-const std::wstring PATH_TEXTURES_TILES = PATH_TEXTURES + L"tiles\\";
-const std::wstring PATH_TEXTURES_MONSTERS = PATH_TEXTURES + L"monsters\\";
-const std::wstring PATH_SKYBOX = PATH_DATA + L"\\sky\\";
+const std::string PATH_DATA = "data";
+const std::string PATH_TEXTURES = PATH_DATA + "\\textures\\";
+const std::string PATH_TEXTURES_TILES = PATH_TEXTURES + "tiles\\";
+const std::string PATH_TEXTURES_MONSTERS = PATH_TEXTURES + "monsters\\";
+const std::string PATH_SKYBOX = PATH_DATA + "\\sky\\";
+const std::string PATH_FONTS = PATH_DATA + "\\fonts\\";
+
 
 //Render
 inline float RenderDistance = 500.f; //farclip
@@ -110,6 +115,10 @@ inline float min(float a, float b)
     return (a > b) ? b : a;
 }
 
+inline std::wstring STR2WSTR(std::string str)
+{
+    return std::wstring(str.begin(), str.end());
+}
 
 //RANDOM
 inline unsigned seed;

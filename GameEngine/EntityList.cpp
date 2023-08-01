@@ -27,8 +27,6 @@ void AddMonster(std::string name, Vector3 pos)
 void SUB_Remove()
 {
 	EntityList.erase(EntityList.begin() + selfID);
-	if(ModelPool[selfID]) ModelPool[selfID].release();
-	if(TexturePool[selfID]) TexturePool[selfID].ReleaseAndGetAddressOf();
 }
 
 void RenderEntityList(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -37,30 +35,21 @@ void RenderEntityList(ID3D11Device* device, ID3D11DeviceContext* context)
 	{
 		if (EntityList[i].model.size())
 		{
-			//GeometricPrimitive::VertexCollection cubeVerts;
-			//GeometricPrimitive::IndexCollection cubeIndices;
-			//GeometricPrimitive::CreateBox(cubeVerts, cubeIndices, EntityList[i].size);
-			////for (auto& it : cubeVerts) it.position = it.position + EntityList[i].position;
-			//CreateDDSTextureFromFile(device, L"mino.dds", nullptr, m_texture.ReleaseAndGetAddressOf());
-			//auto lol = GeometricPrimitive::CreateCustom(context, cubeVerts, cubeIndices);
-
-
-			//auto lol = GeometricPrimitive::CreateBox(context, EntityList[i].size);
-			if (!ModelPool[i])
+			if (!EntityList[i].mesh)
 			{
-				ModelPool[i] = GeometricPrimitive::CreateBox(context, EntityList[i].size);
+				EntityList[i].mesh = GeometricPrimitive::CreateBox(context, EntityList[i].size);
 			}
-			if (!TexturePool[i])
+			if (!EntityList[i].texture)
 			{
 				std::wstring texture_path(EntityList[i].model.begin(), EntityList[i].model.end());
-				if (CreateDDSTextureFromFile(device, texture_path.c_str(), nullptr, TexturePool[i].ReleaseAndGetAddressOf()) != S_OK)
+				if (CreateDDSTextureFromFile(device, texture_path.c_str(), nullptr, EntityList[i].texture.ReleaseAndGetAddressOf()) != S_OK)
 				{
 					printf("ERROR LOADING TEXTURE: %s\n", EntityList[i].model.c_str());
-					GenerateTexture(device, TexturePool[i].ReleaseAndGetAddressOf());
+					GenerateTexture(device, EntityList[i].texture.ReleaseAndGetAddressOf());
 				}
 			}
 
-			if (ModelPool[i] && TexturePool[i])
+			if (EntityList[i].mesh && EntityList[i].texture)
 			{
 				Matrix worldMatrix = Matrix::CreateTranslation(EntityList[i].position);
 				if (EntityList[i].sprite)
@@ -74,8 +63,8 @@ void RenderEntityList(ID3D11Device* device, ID3D11DeviceContext* context)
 				m_effect->SetWorld(worldMatrix);
 				m_effect->SetView(m_view);
 				m_effect->SetProjection(m_proj);
-				m_effect->SetTexture(TexturePool[i].Get());
-				ModelPool[i]->Draw(m_effect.get(), m_inputLayout, true, false);
+				m_effect->SetTexture(EntityList[i].texture.Get());
+				EntityList[i].mesh->Draw(m_effect.get(), m_inputLayout, true, false);
 				//lol->Draw(worldMatrix, m_view, m_proj, Colors::White, m_texture.Get());
 			}
 		}

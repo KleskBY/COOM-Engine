@@ -14,17 +14,15 @@ struct ENTITY
 	std::string model;
 	BoundingBox bbox;
 	bool sprite;
+	std::shared_ptr<GeometricPrimitive> mesh;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture;
 
 	float next_think;
 	TH_FUNC think = nullptr;
 };
 
 
-
 inline std::vector<ENTITY> EntityList;
-//inline std::vector<std::unique_ptr<DirectX::GeometricPrimitive>> ModelPool;
-inline std::unique_ptr<DirectX::GeometricPrimitive> ModelPool[1024];
-inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> TexturePool[1024];
 inline ENTITY* self;
 inline int selfID;
 

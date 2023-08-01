@@ -2,7 +2,7 @@
 #include "dx_tools.h"
 
 
-void GenerateTexture(ID3D11Device* pDevice, ID3D11ShaderResourceView** texture/*, uint32_t pixelcolor, DXGI_FORMAT format*/)//DXGI_FORMAT_R32G32B32A32_FLOAT DXGI_FORMAT_R8G8B8A8_UNORM
+void GenerateTexture(ID3D11Device* pDevice, ID3D11ShaderResourceView** texture)
 {
 	ID3D11Texture2D* texc = nullptr;
 	uint32_t pixelcolor = 0xFFFFFFFF; //0xff00ff00 green, 0xffff0000 blue, 0xff0000ff red, 0x00FFFFFF white, 0xFFFFFFFF  black

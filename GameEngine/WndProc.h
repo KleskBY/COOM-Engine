@@ -1,0 +1,2 @@
+#pragma once
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

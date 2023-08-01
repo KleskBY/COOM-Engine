@@ -15,7 +15,8 @@ namespace input
         }
         if(LockMouse) m_mouse->SetMode(Mouse::MODE_RELATIVE);
         else m_mouse->SetMode(Mouse::MODE_ABSOLUTE);
-        //m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+
+        if (ShowMenu) return;
         Attack = mouse.leftButton;
     }
 
@@ -25,20 +26,20 @@ namespace input
         auto kb = m_keyboard->GetState();
         tracker.Update(kb);
 
+        if (tracker.IsKeyReleased(Keyboard::Escape))
+        {
+            ShowMenu = !ShowMenu;
+            LockMouse = !ShowMenu;
+        }
+        if (kb.F4) PostQuitMessage(0);
+
+        if (ShowMenu) return;
         Move = Vector3::Zero;
         if (kb.Up || kb.W) Move.z += 1.f;
         if (kb.Down || kb.S) Move.z -= 1.f;
         if (kb.Left || kb.A) Move.x += 1.f;
         if (kb.Right || kb.D) Move.x -= 1.f;
         if (kb.PageUp || kb.Space) Move.y += 1.f;
-        if (kb.PageDown || kb.X || kb.C) Move.y -= 1.f;
-        
-        if (tracker.IsKeyReleased(Keyboard::Escape))
-        {
-            LockMouse = !LockMouse;
-        }
-
-    
-        if(kb.F4) PostQuitMessage(0);
+        if (kb.PageDown || kb.LeftControl || kb.C) Move.y -= 1.f;
     }
 }

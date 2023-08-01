@@ -29,7 +29,5 @@ namespace client
 			Vector3 vec = forward;
 			m_cameraPos = player::PlayerPosition + player::VecView - vec * 10.0f;
 		}
-
-		
 	}
 }

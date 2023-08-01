@@ -63,9 +63,6 @@
     <ClInclude Include="LevelManager.h">
       <Filter>level</Filter>
     </ClInclude>
-    <ClInclude Include="e1m1_collision.h">
-      <Filter>level</Filter>
-    </ClInclude>
     <ClInclude Include="Viewmodel.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -111,6 +108,13 @@
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="WndProc.h" />
+    <ClInclude Include="gui_style.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_hud.h">
+      <Filter>gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +186,13 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="WndProc.cpp" />
+    <ClCompile Include="gui_style.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui_hud.cpp">
+      <Filter>gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 #include "render.h"
 
 #include "EntityList.h"
-
+#include "PlayerController.h"
 
 void extractBoundingBoxes(const std::string& filename) 
 {
@@ -37,8 +37,7 @@ void extractBoundingBoxes(const std::string& filename)
             std::string objectName;
             iss >> objectName;
 
-            
-            if (objectName.find("monster_") != std::string::npos) //monster ent
+            if (objectName.find("monster_") != std::string::npos || objectName.find("info_") != std::string::npos) //ent
             {
                 vertices.clear();
             }
@@ -71,8 +70,34 @@ void extractBoundingBoxes(const std::string& filename)
     file.close();
 }
 
+void UnloadLevel()
+{
+    CurrentLevel = "";
+    LevelBBoxes.clear();
+
+    for (int i = 0; i < LevelTextures.size(); i++)
+    {
+        LevelTextures[i].ReleaseAndGetAddressOf();
+    }
+    LevelTextures.clear();
+
+    for (int i = 0; i < LevelObjects.size(); i++)
+    {
+        LevelObjects[i].release();
+    }
+    LevelObjects.clear();
+
+
+    for (int i = 0; i < EntityList.size(); i++)
+    {
+        EntityList[i].think = SUB_Remove;
+        EntityList[i].next_think = 0;
+    }
+}
+
 void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string mapName)
 {
+    UnloadLevel();
     CurrentLevel = mapName;
 
     // Load the .OBJ file
@@ -105,17 +130,26 @@ void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string m
             }
             continue;
         }
+        if (textureNames[i].find("info_player_start") != std::string::npos) //Start point
+        {
+            Vector3 pos = vertexDataMap.at(textureNames[i])[0].position;
+            player::PlayerPosition = pos;
+            player::PlayerVelocity = Vector3::Zero;
+            player::PlayerGrounded = true;
+            player::PlayerHealth = 100;
+            continue;
+        }
 
         //Creating textures
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture;
-        std::wstring texture_path(textureNames[i].begin(), textureNames[i].end());
-        texture_path = texture_path + L".dds";
-        if (CreateDDSTextureFromFile(device, texture_path.c_str(), nullptr, texture.ReleaseAndGetAddressOf()) != S_OK)
+        std::string texture_path = textureNames[i];
+        texture_path = texture_path + ".dds";
+        if (CreateDDSTextureFromFile(device, STR2WSTR(texture_path).c_str(), nullptr, texture.ReleaseAndGetAddressOf()) != S_OK)
         {
             texture_path = PATH_TEXTURES_TILES + texture_path;
-            if (CreateDDSTextureFromFile(device, texture_path.c_str(), nullptr, texture.ReleaseAndGetAddressOf()) != S_OK)
+            if (CreateDDSTextureFromFile(device, STR2WSTR(texture_path).c_str(), nullptr, texture.ReleaseAndGetAddressOf()) != S_OK)
             {
-                std::wcout << L"ERROR LOADING TEXTURE: " << texture_path << std::endl;
+                std::cout << "ERROR LOADING TEXTURE: " << texture_path << std::endl;
                 GenerateTexture(device, texture.ReleaseAndGetAddressOf());
             }
         }
@@ -128,11 +162,6 @@ void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string m
 
 void RenderLevel(ID3D11DeviceContext* context)
 {
-    if (LevelModel)
-    {
-        LevelModel->Draw(context, *m_states, m_world, m_view, m_proj);
-    }
-
     for (int i = 0; i < LevelObjects.size(); i++)
     {
         //context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);

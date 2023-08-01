@@ -46,8 +46,8 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
-    //m_timer.SetFixedTimeStep(true);
-    //m_timer.SetTargetElapsedSeconds(1.0 / 120);
+    m_timer.SetFixedTimeStep(true);
+    m_timer.SetTargetElapsedSeconds(1.0 / 120); //120 FPS MAX
 
     m_keyboard = std::make_unique<Keyboard>();
     m_mouse = std::make_unique<Mouse>();
@@ -86,7 +86,7 @@ void Game::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
 
     Renderer(m_deviceResources->GetD3DDevice(), context, m_deviceResources->GetSwapChain());
-    //postprocess::Run(m_deviceResources->GetD3DDevice(), context, m_deviceResources->GetSwapChain()); //blur
+    if(ShowMenu) postprocess::Run(m_deviceResources->GetD3DDevice(), context, m_deviceResources->GetSwapChain()); //blur
     gui::RenderGUI(m_deviceResources->GetD3DDevice(), context); //imgui
 
 

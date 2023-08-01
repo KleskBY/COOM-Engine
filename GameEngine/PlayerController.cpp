@@ -80,15 +80,10 @@ namespace player
 		//PlayerVelocity = PlayerVelocity + move * Accelerate * DeltaTime;
 	}
 
-	void CheckSide(BoundingBox box, Vector3 org)
-	{
-	}
 
-	// Function to determine the collision face
+	// Function to determine the collision face but sometimes it returns broken vector idk why
 	DirectX::XMVECTOR GetCollisionNormal(const DirectX::BoundingBox& box, const DirectX::XMVECTOR& collisionPoint)
 	{
-
-		// Calculate the center of the bounding box
 		DirectX::XMVECTOR center = (box.Center + box.Extents);
 
 		// Calculate the differences between the collision point and the center along each axis
@@ -101,23 +96,42 @@ namespace player
 		// Determine the collision normal based on the axis with the smallest difference
 		if (minDiff == DirectX::XMVectorGetX(absDiff))
 		{
-			// Collision along the X-axis
-			printf("x\n");
 			return DirectX::XMVectorSet(DirectX::XMVectorGetX(diff) > 0 ? 1.0f : -1.0f, 0.0f, 0.0f, 0.0f);
 		}
 		else if (minDiff == DirectX::XMVectorGetY(absDiff))
 		{
-			// Collision along the Y-axis
-			printf("y\n");
 			return DirectX::XMVectorSet(0.0f, DirectX::XMVectorGetY(diff) > 0 ? 1.0f : -1.0f, 0.0f, 0.0f);
 		}
 		else
 		{
-			// Collision along the Z-axis
-			printf("z\n");
 			return DirectX::XMVectorSet(0.0f, 0.0f, DirectX::XMVectorGetZ(diff) > 0 ? 1.0f : -1.0f, 0.0f);
 		}
 	}
+
+	bool GetCollisionNormal2(BoundingBox levelObject, Vector3 pos, Vector3& collisionNormal)
+	{
+		g_PrimaryRay.origin = pos;
+		g_PrimaryRay.direction = pos.Forward;
+		float distForward = 99999.f;
+		if (!levelObject.Intersects(pos, pos.Forward, distForward)) distForward = 99999.f;
+		float distBack = 99999.f;
+		if (!levelObject.Intersects(pos, -pos.Forward, distBack)) distBack = 99999.f;
+		float distLeft = 99999.f;
+		if (!levelObject.Intersects(pos, -pos.Right, distLeft)) distLeft = 99999.f;
+		float distRight = 99999.f;
+		if (!levelObject.Intersects(pos, pos.Right, distRight)) distRight = 99999.f;
+		float min = std::min({ distForward, distLeft, distRight, distBack });
+		if (min < 3.f)
+		{
+			if (min == distForward) collisionNormal = Vector3(0, 0, 1);
+			if (min == distBack) collisionNormal = Vector3(0, 0, -1);
+			if (min == distLeft) collisionNormal = Vector3(1, 0, 0);
+			if (min == distRight) collisionNormal = Vector3(-1, 0, 0);
+			return true;
+		}
+		return false;
+	}
+
 	bool IsObjectToLeft(const XMVECTOR& referenceVector, const XMVECTOR& objectPosition)
 	{
 		// Calculate the vector pointing from the reference to the object
@@ -192,45 +206,19 @@ namespace player
 				}
 				else
 				{
+					if (lastGoodPos == Vector3::Zero) lastGoodPos = PlayerPosition + Vector3::Up * DeltaTime;
 					Vector3 shit = lastGoodPos - PlayerPosition;
 					shit.Normalize();
 
-
-					Vector3 collisionNormal = GetCollisionNormal(levelObject, PlayerPosition);
-					float distForward = 99999.f;
-					if (!levelObject.Intersects(PlayerPosition, PlayerPosition.Forward, distForward)) distForward = 99999.f;
-					float distBack = 99999.f;
-					if (!levelObject.Intersects(PlayerPosition, -PlayerPosition.Forward, distBack)) distBack = 99999.f;
-					float distLeft = 99999.f;
-					if (!levelObject.Intersects(PlayerPosition, -PlayerPosition.Right, distLeft)) distLeft = 99999.f;
-					float distRight = 99999.f;
-					if (!levelObject.Intersects(PlayerPosition, PlayerPosition.Right, distRight)) distRight = 99999.f;
-					float min = std::min({ distForward, distLeft, distRight, distBack });
-					if (min < 3.f)
+					Vector3 collisionNormal = GetCollisionNormal(levelObject, PlayerPosition);					
+					if (!GetCollisionNormal2(levelObject, PlayerPosition, collisionNormal))
 					{
-						if (min == distForward)
+						if (!GetCollisionNormal2(levelObject, PlayerPosition + PlayerSize * 0.49f, collisionNormal))
 						{
-							collisionNormal = Vector3(0, 0, 1);
-							printf("f %f\n", min);
-						}
-						if (min == distBack)
-						{
-							collisionNormal = Vector3(0, 0, -1);
-							printf("b %f\n", min);
-						}
-						if (min == distLeft)
-						{
-							collisionNormal = Vector3(1, 0, 0);
-							printf("l %f\n", min);
-						}
-						if (min == distRight)
-						{
-							collisionNormal = Vector3(-1, 0, 0);
-							printf("r %f\n", min);
+							GetCollisionNormal2(levelObject, PlayerPosition - PlayerSize * 0.49f, collisionNormal);
 						}
 					}
 
-					GroundVel = collisionNormal;
 					Vector3 GroundVel2 = PlayerVelocity - collisionNormal * PlayerVelocity.Dot(collisionNormal) /* pls.Length()*/;
 					PlayerVelocity = Vector3(GroundVel2.x, PlayerVelocity.y, GroundVel2.z);
 
@@ -239,21 +227,6 @@ namespace player
 					PlayerPosition = PlayerPosition + collisionNormal * 10.f * DeltaTime;
 					UpdateColliderPosition();
 					break;
-					//Vector3 collisionNormal = levelObject.Center - PlayerCollider.Center;
-					//collisionNormal.y = 0.f;
-					//collisionNormal.Normalize();
-
-					//Vector3 pls = Vector3(PlayerVelocity.x, 0.0f, PlayerVelocity.z);
-					//pls.Normalize();
-					//GroundVel = pls - collisionNormal * pls.Dot(collisionNormal) /* pls.Length()*/;
-					//GroundVel.Normalize();
-					//PlayerVelocity = -GroundVel * 2.0f * DeltaTime;
-
-					//Vector3 pls = Vector3(PlayerVelocity.x, 0.0f, PlayerVelocity.z);
-					//pls.Normalize();
-					//GroundVel = pls - collisionNormal * pls.Dot(collisionNormal) * pls.Length();
-					//GroundVel.Normalize();
-					//PlayerVelocity = PlayerVelocity - GroundVel * 0.3f;
 				}
 			}
 		}
@@ -263,6 +236,7 @@ namespace player
 
 	void PlayerMove()
 	{
+		if (PlayerHealth <= 0) return;
 		if (noclip)
 		{
 			Quaternion q = Quaternion::CreateFromYawPitchRoll(m_yaw, -m_pitch, 0.f);
@@ -288,33 +262,10 @@ namespace player
 			else PlayerSize = Vector3::Lerp(PlayerSize, STAND_SIZE, 10.f * DeltaTime);
 
 			CheckCollisions();
-			//BoundingBox testBox;
-			//testBox.Center = PlayerPosition + PlayerVelocity * 120.f * DeltaTime;
-			//testBox.Extents = PlayerSize / 2;
-
-			//GroundVel = Vector3::Zero;
-			//for (const auto& levelObject : LevelBBoxes)
-			//{
-			//	if (testBox.Intersects(levelObject))
-			//	{
-			//		float groundHeight = levelObject.Center.y + levelObject.Extents.y;
-			//		float playerBottom = PlayerCollider.Center.y - PlayerCollider.Extents.y;
-
-			//		if (playerBottom + STEP_HEIGHT < groundHeight)
-			//		{
-			//			Vector3 collisionNormal = GetCollisionNormal(levelObject, PlayerPosition);
-			//			GroundVel += PlayerVelocity - collisionNormal * PlayerVelocity.Dot(collisionNormal) /* pls.Length()*/;
-			//			PlayerVelocity = GroundVel;
-			//		}
-			//	}
-			//}
-
-
-
-
 			PlayerPosition += PlayerVelocity * 120.f * DeltaTime;
 		}
 		UpdateColliderPosition();
+		if(Vector3::Distance(m_cameraPos, PlayerPosition) > 6.f) m_cameraPos = m_cameraPos.Lerp(m_cameraPos, PlayerPosition + VecView, 16.0f * DeltaTime);
 		m_cameraPos = m_cameraPos.Lerp(m_cameraPos, PlayerPosition + VecView, 16.0f * DeltaTime); //trick  //m_cameraPos = PlayerPosition + VecView;
 	}
 }
