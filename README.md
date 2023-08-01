@@ -9,7 +9,7 @@
 - Post Processing.<br>
 - Dear ImGui integrated.<br>
 - Player Character controller with noclip and other stuff.<br>
-- Blender project with python script to export collision.<br>
+- Blender project.<br>
 - Bullet hole and particle effects.<br>
 - Recoil and spread.<br>
 - Weapon bob like in GZdoom.<br>
