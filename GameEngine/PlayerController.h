@@ -12,8 +12,9 @@ namespace player
 	constexpr float GRAVITY = 0.800f;
 	constexpr float JUMP_FORCE = 0.12f;
 	constexpr float STEP_HEIGHT = 0.5f;
-	constexpr float NOCLIP_SPEED = 300.0f;
-
+	constexpr float NOCLIP_SPEED = 30.0f;
+	constexpr Vector3 STAND_SIZE = Vector3(1.0f, 1.8f, 1.0f);
+	constexpr Vector3 CROUCH_SIZE = Vector3(1.0f, 1.0f, 1.0f);
 	//constexpr float FRICTION = 8.0f;
 	//constexpr float ACCELERATION = 1.00f;
 	//constexpr float SPEED = 50.0f;
@@ -30,7 +31,7 @@ namespace player
 	inline Vector3 PlayerVelocity;
 	inline Vector3 VecView = Vector3(0.0f, 0.6f, 0.0f);
 	inline Vector3 CameraPos;
-	inline Vector3 PlayerSize = Vector3(1.0f, 1.8f, 1.0f);
+	inline Vector3 PlayerSize = STAND_SIZE;
 	inline bool PlayerGrounded;
 	inline bool noclip;
 

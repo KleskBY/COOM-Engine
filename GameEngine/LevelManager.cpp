@@ -1,21 +1,78 @@
 #include "pch.h"
 #include "LevelManager.h"
-
-
 #include "OBJLoader.h"
-#include "e1m1_collision.h"
 #include "dx_tools.h"
 #include "render.h"
 
 #include "EntityList.h"
 
 
+void extractBoundingBoxes(const std::string& filename) 
+{
+    std::ifstream file(filename);
+    if (!file.is_open()) 
+    {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    std::vector<Vector3> vertices;
+    std::string line;
+    std::string prefix;
+    while (std::getline(file, line)) 
+    {
+        std::istringstream iss(line);
+        iss >> prefix;
+
+        if (prefix == "v") 
+        {
+            Vector3 vertex;
+            iss >> vertex.x >> vertex.y >> vertex.z;
+            vertices.push_back(vertex);
+        }
+
+        // For simplicity, we consider each new object in the .OBJ file as a separate bounding box.
+        if (prefix == "o") 
+        {
+            std::string objectName;
+            iss >> objectName;
+
+            
+            if (objectName.find("monster_") != std::string::npos) //monster ent
+            {
+                vertices.clear();
+            }
+            else
+            {
+                if (!vertices.empty())
+                {
+                    Vector3 minPoint, maxPoint;
+                    minPoint = maxPoint = vertices[0];
+                    for (const auto& vertex : vertices)
+                    {
+                        if (vertex.x < minPoint.x) minPoint.x = vertex.x;
+                        if (vertex.y < minPoint.y) minPoint.y = vertex.y;
+                        if (vertex.z < minPoint.z) minPoint.z = vertex.z;
+
+                        if (vertex.x > maxPoint.x) maxPoint.x = vertex.x;
+                        if (vertex.y > maxPoint.y) maxPoint.y = vertex.y;
+                        if (vertex.z > maxPoint.z) maxPoint.z = vertex.z;
+                    }
+                    BoundingBox box;
+                    box.Extents = (maxPoint - minPoint) / 2;
+                    box.Center = (minPoint + maxPoint) / 2;
+                    LevelBBoxes.push_back(box);
+                }
+                vertices.clear();
+            }
+        }
+    }
+
+    file.close();
+}
 
 void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string mapName)
 {
-    //std::wstring cmo_model(mapName.begin(), mapName.end());
-    //cmo_model = cmo_model + L".cmo";
-    //LevelModel = Model::CreateFromCMO(device, cmo_model.c_str(), *m_fxFactory);
     CurrentLevel = mapName;
 
     // Load the .OBJ file
@@ -28,13 +85,13 @@ void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string m
         objFilename = "data/levels/" + mapName + ".obj";
         LoadOBJ(objFilename, textureNames, vertexDataMap, indexDataMap, true);
     }
+    extractBoundingBoxes(objFilename);
 
     for (int i = 0; i < vertexDataMap.size(); i++)
     {
         //We got a MONSTER
         if (textureNames[i].find("monster_") != std::string::npos)
         {
-            std::cout << textureNames[i] << std::endl;
             Vector3 pos = vertexDataMap.at(textureNames[i])[0].position;
             AddMonster(textureNames[i], pos);
             for (int j = 0; j < vertexDataMap.at(textureNames[i]).size(); j++)
@@ -67,8 +124,6 @@ void LoadLevel(ID3D11Device* device, ID3D11DeviceContext* context, std::string m
         //Creating mesh
         LevelObjects.push_back(GeometricPrimitive::CreateCustom(context, vertexDataMap.at(textureNames[i]), indexDataMap.at(textureNames[i])));
     }
-
-    LoadCollision_E1M1(); //Load collision;
 }
 
 void RenderLevel(ID3D11DeviceContext* context)
