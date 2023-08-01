@@ -138,7 +138,7 @@ namespace gui
                 ImGui::Text(__DATE__);
                 //ImGui::Text((std::to_string(player::PlayerPosition.x) + ", " + std::to_string(player::PlayerPosition.y) + ", " + std::to_string(player::PlayerPosition.z)).c_str());
 
-
+                //FPS
                 if (m_AccumulatedDeltaTime >= pollingTime)
                 {
                     framerate = (int)((float)m_AccumulatedFrameCount / m_AccumulatedDeltaTime);
@@ -147,7 +147,6 @@ namespace gui
                 }
                 m_AccumulatedDeltaTime += DeltaTime;
                 m_AccumulatedFrameCount++;
-
                 ImGui::Text((std::to_string(framerate) + " FPS").c_str());
 
                 if (ShowMenu)
@@ -161,7 +160,7 @@ namespace gui
 
 
 
-                DrawHud();
+                if(!ShowMenu) DrawHud();
 
 
                 ImGui::GetWindowDrawList()->PushClipRectFullScreen();
