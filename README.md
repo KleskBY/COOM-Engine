@@ -15,8 +15,10 @@
 - Weapon bob like in GZdoom.<br>
 
 <h2>TODO:</h2>
+- Inventory and weapon system<br>
 - Sound system<br>
 - Better AI<br>
 - Player HUD<br>
 - Scene change<br>
 - Multiplayer<br>
+- Script language (LUAJIT or JS)<br>
